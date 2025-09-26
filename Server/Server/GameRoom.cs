@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Game;
+using Game.FlatBuffersSupport;
 
 namespace Server
 {
@@ -11,17 +13,20 @@ namespace Server
         JobQueue _jobQueue = new JobQueue();
         List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
 
-        public void Push(Action job)
-        {
-            _jobQueue.Push(job);
-        }
+        public void Push(Action job) => _jobQueue.Push(job);
 
         public void Flush()
         {
+            if (_pendingList.Count == 0)
+                return;
             foreach (ClientSession s in _sessions)
                 s.Send(_pendingList);
-            //Console.WriteLine($"Flushed {_pendingList.Count} items");
             _pendingList.Clear();
+        }
+
+        public void Broadcast(byte[] raw)
+        {
+            _pendingList.Add(new ArraySegment<byte>(raw));
         }
 
         public void Broadcast(ArraySegment<byte> segment)
@@ -31,59 +36,38 @@ namespace Server
 
         public void Enter(ClientSession session)
         {
-            // 플레이어 추가하고
             _sessions.Add(session);
             session.Room = this;
 
-            // 신입생한테 모든 플레이어 목록 전송
-            S_PlayerList players = new S_PlayerList();
+            // PlayerList 전송 (자신 포함 모든 플레이어)
+            var entries = new List<(bool isSelf, int playerId, float x, float y, float z)>(_sessions.Count);
             foreach (ClientSession s in _sessions)
             {
-                players.players.Add(new S_PlayerList.Player()
-                {
-                    isSelf = (s == session),
-                    playerId = s.SessionId,
-                    posX = s.PosX,
-                    posY = s.PosY,
-                    posZ = s.PosZ,
-                });
+                entries.Add((s == session, s.SessionId, s.PosX, s.PosY, s.PosZ));
             }
-            session.Send(players.Write());
+            var playerListBytes = FlatMessageHelper.BuildSPlayerList(entries);
+            session.Send(new ArraySegment<byte>(playerListBytes));
 
-            // 신입생 입장을 모두에게 알린다
-            S_BroadcastEnterGame enter = new S_BroadcastEnterGame();
-            enter.playerId = session.SessionId;
-            enter.posX = 0;
-            enter.posY = 0;
-            enter.posZ = 0;
-            Broadcast(enter.Write());
+            // EnterGame broadcast
+            var enterBytes = FlatMessageHelper.BuildSBroadcastEnterGame(session.SessionId, session.PosX, session.PosY, session.PosZ);
+            Broadcast(enterBytes);
         }
 
         public void Leave(ClientSession session)
         {
-            // 플레이어 제거하고
             _sessions.Remove(session);
-
-            // 모두에게 알린다
-            S_BroadcastLeaveGame leave = new S_BroadcastLeaveGame();
-            leave.playerId = session.SessionId;
-            Broadcast(leave.Write());
+            var leaveBytes = FlatMessageHelper.BuildSBroadcastLeaveGame(session.SessionId);
+            Broadcast(leaveBytes);
         }
 
-        public void Move(ClientSession session, C_Move packet)
+        public void Move(ClientSession session, float x, float y, float z)
         {
-            // 좌표 바꿔주고
-            session.PosX = packet.posX;
-            session.PosY = packet.posY;
-            session.PosZ = packet.posZ;
+            session.PosX = x;
+            session.PosY = y;
+            session.PosZ = z;
 
-            // 모두에게 알린다
-            S_BroadcastMove move = new S_BroadcastMove();
-            move.playerId = session.SessionId;
-            move.posX = session.PosX;
-            move.posY = session.PosY;
-            move.posZ = session.PosZ;
-            Broadcast(move.Write());
+            var moveBytes = FlatMessageHelper.BuildSBroadcastMove(session.SessionId, session.PosX, session.PosY, session.PosZ);
+            Broadcast(moveBytes);
         }
     }
 }
