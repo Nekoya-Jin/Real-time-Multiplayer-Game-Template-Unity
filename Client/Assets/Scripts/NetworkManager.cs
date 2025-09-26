@@ -113,4 +113,18 @@ public class NetworkManager : MonoBehaviour
             Debug.LogError("[NETWORK] ❌ 치명적 오류: 세션이 null입니다!");
         }
     }
+
+    public void SendCMove(float x, float y, float z)
+    {
+        if (!IsConnected) return;
+        var bytes = Game.FlatBuffersSupport.FlatMessageHelper.BuildCMove(x, y, z);
+        Send(new ArraySegment<byte>(bytes));
+    }
+
+    public void SendCLeaveGame()
+    {
+        if (!IsConnected) return;
+        var bytes = Game.FlatBuffersSupport.FlatMessageHelper.BuildCLeaveGame();
+        Send(new ArraySegment<byte>(bytes));
+    }
 }
