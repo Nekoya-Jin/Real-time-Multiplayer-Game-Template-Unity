@@ -6,6 +6,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="${SCRIPT_DIR}/.."
 SCHEMA_DIR="${ROOT_DIR}/Common/FlatBuffers"
 SCHEMA_FILE="${SCHEMA_DIR}/game.fbs"
+HELPER_FILE="${SCHEMA_DIR}/FlatMessageHelper.cs"
 
 # 출력 경로
 SERVER_OUT="${ROOT_DIR}/Server/Generated"
@@ -30,5 +31,12 @@ GEN_SRC_LIST=$(find "${COMMON_OUT}" -maxdepth 1 -name '*.cs' -print)
 echo "[INFO] 서버 / 클라이언트 동기화"
 rsync -a --delete "${COMMON_OUT}/" "${SERVER_OUT}/"
 rsync -a --delete "${COMMON_OUT}/" "${CLIENT_OUT}/"
+
+# FlatMessageHelper 동기화 (수동 작성 헬퍼)
+if [ -f "${HELPER_FILE}" ]; then
+  echo "[INFO] FlatMessageHelper 복사"
+  cp "${HELPER_FILE}" "${SERVER_OUT}/"  # 서버
+  cp "${HELPER_FILE}" "${CLIENT_OUT}/"  # 클라이언트 (Unity Assets 내부)
+fi
 
 echo "[INFO] 생성 완료"
