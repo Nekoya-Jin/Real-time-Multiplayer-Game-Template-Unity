@@ -1,0 +1,22 @@
+# Build results
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+
+# VS Code
+.vscode/settings.json
+
+# Dummy files
+dummy.js
+
+# User-specific files
+*.user
+*.userosscache
+*.sln.docstates
+
+# Temporary files
+*.tmp
+*.temp
+*.log
