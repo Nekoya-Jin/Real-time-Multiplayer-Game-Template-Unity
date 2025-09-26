@@ -11,7 +11,7 @@ Unity와 C# 서버를 사용한 실시간 멀티플레이어 게임 템플릿입
 │   │   ├── Scenes/     # Unity 씬 파일들
 │   │   └── Resources/  # 리소스 파일들
 │   └── ProjectSettings/ # Unity 프로젝트 설정
-├── Server1/            # C# 서버 프로젝트
+├── Server/              # C# 서버 프로젝트
 │   ├── Server/         # 메인 서버 코드
 │   ├── ServerCore/     # 서버 코어 라이브러리
 │   └── DummyClient/    # 테스트용 더미 클라이언트
@@ -30,7 +30,7 @@ Unity와 C# 서버를 사용한 실시간 멀티플레이어 게임 템플릿입
 ## 시작하기
 
 ### 서버 실행
-1. `Server1/Server.sln` 솔루션을 Visual Studio에서 열기
+1. `Server/Server.sln` 솔루션을 Visual Studio에서 열기
 2. Server 프로젝트를 시작 프로젝트로 설정
 3. 빌드 후 실행
 
