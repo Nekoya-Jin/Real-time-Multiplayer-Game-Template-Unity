@@ -1,29 +1,21 @@
 using System;
 using System.Collections.Generic;
-using FlatBuffers;
+using Google.FlatBuffers;
 using Game;
 
 namespace Game.FlatBuffersSupport
 {
-    // Helper for building and parsing size‑prefixed FlatBuffer Message packets
     public static class FlatMessageHelper
     {
-        // Build generic wrapper (size‑prefixed) returning byte[] ready to send
         private static byte[] FinishAndGetBytes(FlatBufferBuilder fbb, Offset<Message> msgOffset)
         {
             fbb.FinishSizePrefixed(msgOffset.Value, fileIdentifier: "GPKT");
-            // Slice exact length (DataBuffer contains larger backing array)
-            var buffer = fbb.DataBuffer; // ByteBuffer
-            int start = buffer.Position; // points to size prefix start
-            int len = buffer.Length - start;
-            byte[] managed = new byte[len];
-            Buffer.BlockCopy(buffer.Data, start, managed, 0, len);
-            return managed;
+            return fbb.SizedByteArray();
         }
 
-        private static Vec3 CreateVec3(FlatBufferBuilder fbb, float x, float y, float z)
+        private static Offset<Vec3> CreateVec3(FlatBufferBuilder fbb, float x, float y, float z)
         {
-            return new Vec3(x, y, z);
+            return Vec3.CreateVec3(fbb, x, y, z);
         }
 
         // --------- Build Methods (Client -> Server) ---------
@@ -132,8 +124,6 @@ namespace Game.FlatBuffersSupport
         public static byte[] BuildSPlayerList(IReadOnlyList<(bool isSelf, int playerId, float x, float y, float z)> entries)
         {
             var fbb = new FlatBufferBuilder(256);
-
-            // Build PlayerEntry vector
             var playerOffsets = new Offset<PlayerEntry>[entries.Count];
             for (int i = 0; i < entries.Count; i++)
             {
@@ -149,7 +139,6 @@ namespace Game.FlatBuffersSupport
             SPlayerList.StartSPlayerList(fbb);
             SPlayerList.AddPlayers(fbb, vec);
             var listOffset = SPlayerList.EndSPlayerList(fbb);
-
             Message.StartMessage(fbb);
             Message.AddType(fbb, PacketType.SPlayerList);
             Message.AddSPlayerList(fbb, listOffset);
@@ -161,18 +150,9 @@ namespace Game.FlatBuffersSupport
         public static Message? Parse(byte[] raw, int offset = 0)
         {
             if (raw == null || raw.Length - offset < 4)
-                return null; // not enough for size prefix
-
-            // raw already includes size prefix because we used FinishSizePrefixed.
-            var bb = new ByteBuffer(raw, offset);
-            try
-            {
-                return Message.GetRootAsMessage(bb);
-            }
-            catch
-            {
                 return null;
-            }
+            var bb = new ByteBuffer(raw, offset);
+            try { return Message.GetRootAsMessage(bb); } catch { return null; }
         }
 
         // Utility to extract which ID is set (debug aid)

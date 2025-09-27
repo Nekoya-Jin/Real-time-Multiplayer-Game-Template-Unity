@@ -99,13 +99,26 @@ namespace ServerCore
             RegisterRecv();
         }
 
+        private static string BytesToHex(ArraySegment<byte> seg, int max = 32)
+        {
+            if (seg.Array == null) return string.Empty;
+            int len = Math.Min(seg.Count, max);
+            StringBuilder sb = new StringBuilder(len * 2);
+            for (int i = 0; i < len; i++) sb.AppendFormat("{0:X2}", seg.Array[seg.Offset + i]);
+            if (seg.Count > len) sb.Append("...");
+            return sb.ToString();
+        }
+
         public void Send(List<ArraySegment<byte>> sendBuffList)
         {
             if (sendBuffList.Count == 0)
                 return;
 
             foreach (ArraySegment<byte> sendBuff in sendBuffList)
+            {
+                Logger.LogDebug($"[SEND-LIST] bytes={sendBuff.Count} hex={BytesToHex(sendBuff)}");
                 _sendQueue.Enqueue(sendBuff);
+            }
 
             // 원자적으로 _pendingSend 상태 확인 후 전송 시작 (Exchange로 가독성 향상)
             if (Interlocked.Exchange(ref _pendingSend, SendPending) == SendIdle)
@@ -114,6 +127,7 @@ namespace ServerCore
 
         public void Send(ArraySegment<byte> sendBuff)
         {
+            Logger.LogDebug($"[SEND] bytes={sendBuff.Count} hex={BytesToHex(sendBuff)}");
             _sendQueue.Enqueue(sendBuff);
 
             // 원자적으로 _pendingSend 상태 확인 후 전송 시작 (Exchange로 가독성 향상)
@@ -263,6 +277,11 @@ namespace ServerCore
                     }
 
                     RegisterRecv();
+                }
+                catch (ArgumentOutOfRangeException ex)
+                {
+                    Logger.LogError($"OnRecvCompleted OutOfRange bufferSize={_recvBuffer.DataSize} msg={ex.Message}");
+                    Disconnect();
                 }
                 catch (Exception e)
                 {

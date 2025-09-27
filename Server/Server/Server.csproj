@@ -9,4 +9,13 @@
   <ItemGroup>
     <ProjectReference Include="..\ServerCore\ServerCore.csproj" />
   </ItemGroup>
+  <!-- FlatBuffers 생성 코드 전체 포함 (Generated 루트 및 모든 하위 폴더) -->
+  <ItemGroup>
+    <Compile Include="..\Generated\**\*.cs">
+      <Link>Generated\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Google.FlatBuffers" Version="25.2.10" />
+  </ItemGroup>
 </Project>
