@@ -64,10 +64,20 @@ dotnet run
 dotnet build Game.sln
 ```
 
-## 📚 참고 문서
+## � 코딩 컨벤션
+
+이 프로젝트는 Microsoft C# 공식 코딩 컨벤션을 따릅니다.
+자세한 내용은 [CODING_CONVENTIONS.md](./CODING_CONVENTIONS.md)를 참조하세요.
+
+- `.editorconfig` 파일을 통해 자동으로 코드 스타일이 적용됩니다
+- 빌드 시 코드 스타일을 검사하여 컨벤션 위반 시 빌드 에러가 발생합니다
+- VSCode에서 C# Dev Kit 확장을 설치하면 실시간으로 컨벤션 위반을 확인할 수 있습니다
+
+## �📚 참고 문서
 
 - [MagicOnion Quickstart with Unity](https://cysharp.github.io/MagicOnion/quickstart-unity)
 - [MagicOnion Project Structure](https://cysharp.github.io/MagicOnion/fundamentals/project-structure)
+- [C# 코딩 컨벤션 가이드](./CODING_CONVENTIONS.md)
 
 ## ⚠️ 주의사항
 

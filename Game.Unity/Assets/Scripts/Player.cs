@@ -17,7 +17,9 @@ public class Player : MonoBehaviour
     public virtual void ApplyInfo(PlayerInfo info)
     {
         if (info == null)
+        {
             return;
+        }
 
         PlayerId = info.PlayerId;
         PlayerName = info.Name;

@@ -1,6 +1,4 @@
-# EditorConfig for Unity Project
-# Based on Unity's official C# coding conventions
-# https://unity.com/how-to/naming-and-code-style-tips-c-scripting-unity
+# EditorConfig is awesome: https://EditorConfig.org
 
 # top-most EditorConfig file
 root = true
@@ -73,9 +71,8 @@ dotnet_style_parentheses_in_other_binary_operators = always_for_clarity:suggesti
 dotnet_style_parentheses_in_other_operators = never_if_unnecessary:suggestion
 
 # Modifier preferences
-dotnet_style_require_accessibility_modifiers = for_non_interface_members:suggestion
-dotnet_style_readonly_field = true:silent
-[*.cs]
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:warning
+dotnet_style_readonly_field = true:warning
 
 # Expression-level preferences
 dotnet_style_object_initializer = true:suggestion
@@ -190,11 +187,11 @@ dotnet_naming_rule.non_field_members_should_be_pascal_case.severity = warning
 dotnet_naming_rule.non_field_members_should_be_pascal_case.symbols = non_field_members
 dotnet_naming_rule.non_field_members_should_be_pascal_case.style = pascal_case
 
-dotnet_naming_rule.private_or_internal_field_should_be_begins_with_underscore.severity = silent
+dotnet_naming_rule.private_or_internal_field_should_be_begins_with_underscore.severity = warning
 dotnet_naming_rule.private_or_internal_field_should_be_begins_with_underscore.symbols = private_or_internal_field
 dotnet_naming_rule.private_or_internal_field_should_be_begins_with_underscore.style = begins_with_underscore
 
-dotnet_naming_rule.private_or_internal_static_field_should_be_begins_with_s_underscore.severity = silent
+dotnet_naming_rule.private_or_internal_static_field_should_be_begins_with_s_underscore.severity = warning
 dotnet_naming_rule.private_or_internal_static_field_should_be_begins_with_s_underscore.symbols = private_or_internal_static_field
 dotnet_naming_rule.private_or_internal_static_field_should_be_begins_with_s_underscore.style = begins_with_s_underscore
 

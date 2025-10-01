@@ -13,26 +13,26 @@ using UnityVector3 = UnityEngine.Vector3;
 public class MyPlayer : Player
 {
     [Header("Movement Settings")]
-    [SerializeField] float _moveSpeed = 6f;
-    [SerializeField] float _packetInterval = 0.25f;
+    [SerializeField] private float moveSpeed = 6f;
+    [SerializeField] private float packetInterval = 0.25f;
 
-    NetworkManager _networkManager = null!;
-    CancellationTokenSource? _movementCts;
+    private NetworkManager _networkManager = null!;
+    private CancellationTokenSource? _movementCts;
 
-    void Awake()
+    private void Awake()
     {
         Debug.Log("[MyPlayer] Initializing local player");
         EnsureNetworkManager();
     }
 
-    void OnEnable()
+    private void OnEnable()
     {
         Debug.Log("[MyPlayer] Starting movement loop");
         _movementCts = new CancellationTokenSource();
         MovementLoopAsync(_movementCts.Token).Forget();
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
         if (_networkManager != null && _networkManager.IsConnected)
         {
@@ -46,41 +46,47 @@ public class MyPlayer : Player
         Debug.Log("[MyPlayer] Stopped movement loop");
     }
 
-    void Update()
+    private void Update()
     {
         HandleMovementInput();
     }
 
-    void EnsureNetworkManager()
+    private void EnsureNetworkManager()
     {
         if (_networkManager != null)
+        {
             return;
+        }
 
         _networkManager = NetworkManager.TryGetOrCreate();
         _networkManager.RegisterLocalPlayer(this);
     }
 
-    void HandleMovementInput()
+    private void HandleMovementInput()
     {
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
 
         var direction = new UnityVector3(h, 0f, v);
         if (direction.sqrMagnitude <= Mathf.Epsilon)
+        {
             return;
+        }
 
-        transform.position += direction.normalized * (_moveSpeed * Time.deltaTime);
+        transform.position += direction.normalized * (moveSpeed * Time.deltaTime);
     }
 
-    async UniTaskVoid MovementLoopAsync(CancellationToken token)
+    private async UniTaskVoid MovementLoopAsync(CancellationToken token)
     {
         await UniTask.SwitchToMainThread();
-        Debug.Log($"[MyPlayer] Movement loop started (interval: {_packetInterval}s)");
+        Debug.Log($"[MyPlayer] Movement loop started (interval: {packetInterval}s)");
 
         while (!token.IsCancellationRequested)
         {
             if (_networkManager == null)
+            {
                 _networkManager = NetworkManager.TryGetOrCreate();
+            }
 
             if (_networkManager != null)
             {
@@ -96,8 +102,9 @@ public class MyPlayer : Player
 
             try
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(_packetInterval), cancellationToken: token);
-            } catch (OperationCanceledException)
+                await UniTask.Delay(TimeSpan.FromSeconds(packetInterval), cancellationToken: token);
+            }
+            catch (OperationCanceledException)
             {
                 Debug.Log("[MyPlayer] Movement loop cancelled");
                 break;
@@ -105,7 +112,7 @@ public class MyPlayer : Player
         }
     }
 
-    UnityVector3 PickRandomTarget()
+    private UnityVector3 PickRandomTarget()
     {
         float x = UnityEngine.Random.Range(-50f, 50f);
         float z = UnityEngine.Random.Range(-50f, 50f);

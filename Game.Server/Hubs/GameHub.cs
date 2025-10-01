@@ -66,7 +66,9 @@ namespace Server.Hubs
         public async Task LeaveAsync()
         {
             if (_room == null || _group == null || _self == null)
+            {
                 return;
+            }
 
             if (_room.TryRemove(_self.PlayerId, out _))
             {

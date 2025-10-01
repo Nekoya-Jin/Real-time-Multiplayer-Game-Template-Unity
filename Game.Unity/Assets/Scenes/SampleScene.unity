@@ -448,10 +448,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 828b8cc67495a5d4fa0be87dfdfb07f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _host: 127.0.0.1
-  _port: 7070
-  _reconnectDelaySeconds: 2
-  _playerPrefab: {fileID: 4345087454850031548, guid: 8304b1928be0bcb44b2823ce54d14c8e,
+  host: 127.0.0.1
+  port: 7070
+  reconnectDelaySeconds: 2
+  playerPrefab: {fileID: 4345087454850031548, guid: 8304b1928be0bcb44b2823ce54d14c8e,
     type: 3}
 --- !u!4 &1335671361
 Transform:

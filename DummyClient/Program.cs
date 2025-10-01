@@ -50,7 +50,10 @@ namespace DummyClient
         private static int ParseClientCount(IReadOnlyList<string> args)
         {
             if (args.Count > 0 && int.TryParse(args[0], out int count) && count > 0)
+            {
                 return count;
+            }
+
             return 5;
         }
 
