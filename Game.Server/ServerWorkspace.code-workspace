@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../Game.Shared"
+		},
+		{
+			"path": "../DummyClient"
+		}
+	],
+	"settings": {
+		"workbench.colorCustomizations": {
+			"titleBar.activeBackground": "#378ec8",
+			"titleBar.border": "#378ec8",
+			"titleBar.activeForeground": "#e9f6ff",
+			"titleBar.inactiveBackground": "#559fd0",
+			"titleBar.inactiveForeground": "#ecf7ff"
+		}
+	}
+}

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.1;net8.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>false</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MagicOnion.Abstractions" Version="7.0.6" />
+    <PackageReference Include="MagicOnion.Serialization.MemoryPack" Version="7.0.6-preview" />
+    <PackageReference Include="MemoryPack" Version="1.21.4" />
+  </ItemGroup>
+</Project>
